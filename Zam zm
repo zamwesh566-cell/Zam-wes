@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zam Wesh – Motivation & Courage</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #0a0a0a;
+      --white: #f5f0e8;
+      --gold: #e8b84b;
+      --orange: #e8520a;
+      --gray: #1c1c1c;
+      --muted: #888;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* CURSOR */
+    body { cursor: none; }
+    #cursor {
+      width: 12px; height: 12px;
+      background: var(--gold);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      transition: transform 0.15s ease;
+      mix-blend-mode: difference;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.5rem 3rem;
+      background: linear-gradient(to bottom, rgba(10,10,10,0.95), transparent);
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      letter-spacing: 0.1em;
+      color: var(--gold);
+      text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--white);
+      font-size: 0.85rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+    .nav-links a:hover { opacity: 1; color: var(--gold); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      justify-content: flex-end;
+      padding: 6rem 3rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 70% 40%, rgba(232,180,75,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse at 20% 80%, rgba(232,82,10,0.1) 0%, transparent 50%);
+    }
+    .hero-noise {
+      position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: 0.4;
+      pointer-events: none;
+    }
+    .hero-tag {
+      font-size: 0.75rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.3s forwards;
+    }
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(5rem, 15vw, 14rem);
+      line-height: 0.9;
+      letter-spacing: -0.01em;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.5s forwards;
+    }
+    .hero-title span { color: var(--gold); }
+    .hero-subtitle {
+      margin-top: 2rem;
+      font-size: 1rem;
+      font-weight: 300;
+      color: var(--muted);
+      max-width: 400px;
+      line-height: 1.7;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.7s forwards;
+    }
+    .hero-cta {
+      margin-top: 2.5rem;
+      display: inline-flex; align-items: center; gap: 0.75rem;
+      background: var(--gold);
+      color: var(--black);
+      padding: 0.9rem 2rem;
+      font-weight: 600;
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      width: fit-content;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.9s forwards;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .hero-cta:hover { background: var(--orange); transform: translateY(-2px); }
+    .hero-cta svg { width: 16px; }
+
+    .hero-scroll {
+      position: absolute; bottom: 2rem; right: 3rem;
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      opacity: 0;
+      animation: fadeIn 1s ease 1.5s forwards;
+    }
+    .hero-scroll span {
+      font-size: 0.65rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted);
+      writing-mode: vertical-rl;
+    }
+    .scroll-line {
+      width: 1px; height: 60px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: scrollPulse 2s ease infinite;
+    }
+
+    /* FEATURED */
+    .section { padding: 6rem 3rem; }
+    .section-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 1rem;
+    }
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      letter-spacing: 0.02em;
+      margin-bottom: 3rem;
+    }
+
+    /* VIDEO GRID */
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .video-card {
+      background: var(--gray);
+      overflow: hidden;
+      position: relative;
+      transition: transform 0.3s ease;
+    }
+    .video-card:hover { transform: translateY(-6px); }
+    .video-card:hover .card-overlay { opacity: 1; }
+    .video-card:hover .play-btn { transform: scale(1.1); }
+
+    .card-thumb {
+      width: 100%; aspect-ratio: 16/9;
+      background: #1a1a1a;
+      position: relative;
+      overflow: hidden;
+    }
+    .card-thumb iframe {
+      width: 100%; height: 100%;
+      border: none;
+      pointer-events: none;
+    }
+    .card-thumb-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, #1a1a1a 0%, #222 100%);
+      font-size: 3rem;
+    }
+    .card-overlay {
+      position: absolute; inset: 0;
+      background: rgba(232,180,75,0.15);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .play-btn {
+      width: 56px; height: 56px;
+      background: var(--gold);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.3s;
+    }
+    .play-btn svg { width: 20px; fill: var(--black); margin-left: 3px; }
+
+    .card-body { padding: 1.25rem; }
+    .card-cat {
+      font-size: 0.65rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+    .card-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem; letter-spacing: 0.04em;
+      line-height: 1.2; margin-bottom: 0.5rem;
+    }
+    .card-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+    .card-date { font-size: 0.7rem; color: #555; margin-top: 1rem; }
+
+    /* ADD VIDEO FORM */
+    .add-section {
+      background: var(--gray);
+      padding: 4rem 3rem;
+      margin: 0 3rem 6rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .add-section::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(to right, var(--gold), var(--orange));
+    }
+    .add-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .add-desc { color: var(--muted); font-size: 0.9rem; margin-bottom: 2rem; }
+
+    .form-row { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .form-group { display: flex; flex-direction: column; gap: 0.5rem; flex: 1; min-width: 200px; }
+    .form-group label { font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
+    .form-group input, .form-group textarea, .form-group select {
+      background: #111;
+      border: 1px solid #333;
+      color: var(--white);
+      padding: 0.8rem 1rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+      border-color: var(--gold);
+    }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+    .form-group select option { background: #111; }
+    .btn-submit {
+      margin-top: 1.5rem;
+      background: var(--gold);
+      color: var(--black);
+      border: none;
+      padding: 0.9rem 2.5rem;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .btn-submit:hover { background: var(--orange); transform: translateY(-2px); }
+
+    /* QUOTE */
+    .quote-section {
+      padding: 5rem 3rem;
+      text-align: center;
+      position: relative;
+    }
+    .quote-section::before {
+      content: '"';
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20rem;
+      color: rgba(232,180,75,0.05);
+      position: absolute; top: -3rem; left: 50%;
+      transform: translateX(-50%);
+      line-height: 1;
+      pointer-events: none;
+    }
+    .quote-text {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      letter-spacing: 0.05em;
+      max-width: 800px;
+      margin: 0 auto 1.5rem;
+      line-height: 1.2;
+    }
+    .quote-text span { color: var(--gold); }
+    .quote-author { color: var(--muted); font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase; }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid #1c1c1c;
+      padding: 3rem;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: gap;
+      gap: 1rem;
+    }
+    .footer-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      color: var(--gold);
+    }
+    .footer-copy { font-size: 0.75rem; color: var(--muted); }
+
+    /* TOAST */
+    #toast {
+      position: fixed; bottom: 2rem; right: 2rem;
+      background: var(--gold); color: var(--black);
+      padding: 1rem 1.5rem;
+      font-weight: 600; font-size: 0.85rem;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* EMPTY STATE */
+    .empty-state {
+      grid-column: 1/-1;
+      text-align: center;
+      padding: 4rem;
+      color: var(--muted);
+    }
+    .empty-state .big { font-size: 3rem; margin-bottom: 1rem; }
+    .empty-state p { font-size: 0.9rem; }
+
+    @media (max-width: 640px) {
+      nav { padding: 1.2rem 1.5rem; }
+      .nav-links { display: none; }
+      .hero { padding: 5rem 1.5rem 3rem; }
+      .section { padding: 4rem 1.5rem; }
+      .add-section { margin: 0 1.5rem 4rem; padding: 2.5rem 1.5rem; }
+      footer { padding: 2rem 1.5rem; flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="cursor"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Zam Wesh</a>
+  <ul class="nav-links">
+    <li><a href="#videos">Vidéos</a></li>
+    <li><a href="#ajouter">Ajouter</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-noise"></div>
+  <p class="hero-tag">Motivation · Courage · Vérité</p>
+  <h1 class="hero-title">ZAM<br/><span>WESH</span></h1>
+  <p class="hero-subtitle">Des vidéos qui te font avancer. Pas de faux semblants, juste du concret pour ceux qui veulent plus.</p>
+  <a href="#videos" class="hero-cta">
+    Voir les vidéos
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+  </a>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- QUOTE -->
+<div class="quote-section reveal">
+  <p class="quote-text">Le succès appartient à ceux qui <span>refusent d'abandonner.</span></p>
+  <p class="quote-author">— Zam Wesh</p>
+</div>
+
+<!-- VIDEOS -->
+<section class="section" id="videos">
+  <p class="section-label reveal">Contenu</p>
+  <h2 class="section-title reveal">Mes Vidéos</h2>
+  <div class="video-grid" id="videoGrid"></div>
+</section>
+
+<!-- ADD VIDEO -->
+<div class="add-section reveal" id="ajouter">
+  <h3 class="add-title">Ajouter une vidéo</h3>
+  <p class="add-desc">Colle le lien YouTube ou entre les infos manuellement.</p>
+  <div class="form-row">
+    <div class="form-group" style="flex:2">
+      <label>Titre de la vidéo *</label>
+      <input type="text" id="f-title" placeholder="Ex: Comment se lever quand tout va mal"/>
+    </div>
+    <div class="form-group">
+      <label>Catégorie</label>
+      <select id="f-cat">
+        <option>Motivation</option>
+        <option>Courage</option>
+        <option>Conseil</option>
+        <option>Mindset</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-row" style="margin-top:1rem">
+    <div class="form-group" style="flex:2">
+      <label>Lien YouTube</label>
+      <input type="url" id="f-url" placeholder="https://youtube.com/watch?v=..."/>
+    </div>
+    <div class="form-group">
+      <label>Description courte</label>
+      <textarea id="f-desc" placeholder="Un résumé en 1-2 phrases..."></textarea>
+    </div>
+  </div>
+  <button class="btn-submit" onclick="addVideo()">Publier la vidéo →</button>
+</div>
+
+<!-- FOOTER -->
+<footer id="contact">
+  <div class="footer-logo">Zam Wesh</div>
+  <p class="footer-copy">© 2026 Zam Wesh. Tous droits réservés.</p>
+</footer>
+
+<div id="toast">✓ Vidéo ajoutée !</div>
+
+<script>
+  // CURSOR
+  const cursor = document.getElementById('cursor');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX - 6 + 'px';
+    cursor.style.top = e.clientY - 6 + 'px';
+  });
+  document.querySelectorAll('a,button,input,textarea,select').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.style.transform = 'scale(3)');
+    el.addEventListener('mouseleave', () => cursor.style.transform = 'scale(1)');
+  });
+
+  // REVEAL ON SCROLL
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => observer.observe(el));
+
+  // VIDEO STORAGE
+  let videos = JSON.parse(localStorage.getItem('zw_videos') || '[]');
+  if (videos.length === 0) {
+    videos = [
+      {
+        title: "Arrête de t'excuser d'exister",
+        cat: "Motivation",
+        desc: "Tu n'as pas à justifier qui tu es. Prends ta place, maintenant.",
+        url: "",
+        date: "30 Mai 2026"
+      },
+      {
+        title: "Le courage, ça s'entraîne",
+        cat: "Courage",
+        desc: "Personne ne naît courageux. C'est un muscle. Voilà comment le développer.",
+        url: "",
+        date: "25 Mai 2026"
+      },
+      {
+        title: "3 conseils qui ont changé ma vie",
+        cat: "Conseil",
+        desc: "Simples, directs, efficaces. Pas besoin de compliqué pour avancer.",
+        url: "",
+        date: "18 Mai 2026"
+      }
+    ];
+  }
+
+  function getYoutubeId(url) {
+    const match = url.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/);
+    return match ? match[1] : null;
+  }
+
+  function renderVideos() {
+    const grid = document.getElementById('videoGrid');
+    if (videos.length === 0) {
+      grid.innerHTML = `<div class="empty-state"><div class="big">🎬</div><p>Aucune vidéo pour l'instant.<br/>Ajoute ta première ci-dessous !</p></div>`;
+      return;
+    }
+    grid.innerHTML = videos.map((v, i) => {
+      const ytId = v.url ? getYoutubeId(v.url) : null;
+      const thumb = ytId
+        ? `<img src="https://img.youtube.com/vi/${ytId}/hqdefault.jpg" style="width:100%;height:100%;object-fit:cover;"/>`
+        : `<div class="card-thumb-placeholder">🎥</div>`;
+      return `
+        <div class="video-card reveal">
+          <div class="card-thumb" onclick="${ytId ? `openVideo('${ytId}')` : ''}">
+            ${thumb}
+            <div class="card-overlay">
+              <div class="play-btn">
+                <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <p class="card-cat">${v.cat}</p>
+            <h3 class="card-title">${v.title}</h3>
+            ${v.desc ? `<p class="card-desc">${v.desc}</p>` : ''}
+            <p class="card-date">${v.date || ''}</p>
+          </div>
+        </div>`;
+    }).join('');
+    // Observe new cards
+    document.querySelectorAll('.video-card.reveal').forEach(el => observer.observe(el));
+  }
+
+  function openVideo(ytId) {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:999;display:flex;align-items:center;justify-content:center;`;
+    overlay.innerHTML = `
+      <div style="position:relative;width:min(860px,90vw);aspect-ratio:16/9;">
+        <iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1" style="width:100%;height:100%;border:none;" allowfullscreen allow="autoplay"></iframe>
+        <button onclick="this.closest('div').parentElement.remove()" style="position:absolute;top:-2.5rem;right:0;background:none;border:none;color:#f5f0e8;font-size:1.5rem;cursor:pointer;font-family:'Bebas Neue',sans-serif;letter-spacing:0.1em;">✕ FERMER</button>
+      </div>`;
+    document.body.appendChild(overlay);
+  }
+
+  function addVideo() {
+    const title = document.getElementById('f-title').value.trim();
+    const cat = document.getElementById('f-cat').value;
+    const url = document.getElementById('f-url').value.trim();
+    const desc = document.getElementById('f-desc').value.trim();
+    if (!title) { alert('Ajoute un titre !'); return; }
+    const now = new Date();
+    videos.unshift({
+      title, cat, url, desc,
+      date: now.toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric' })
+    });
+    localStorage.setItem('zw_videos', JSON.stringify(videos));
+    document.getElementById('f-title').value = '';
+    document.getElementById('f-url').value = '';
+    document.getElementById('f-desc').value = '';
+    renderVideos();
+    const toast = document.getElementById('toast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+    document.getElementById('videos').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  renderVideos();
+</script>
+</body>
+</html>
